@@ -19,11 +19,11 @@
 ### 🧩 원인 분석 및 솔루션
 1. useCallback 함수로 묶지 말고, 호출 가능한 위치로 분리
 
-- 문제
+- 문제: 
 fetchCards 함수를 useCallback으로 감쌌더니, url이 변해도 fetchCards가 갱신되지 않아,
 변경된 selectedTag를 반영하지 못하고 이전 URL로만 요청하는 문제가 발생함.
 
-- 해결
+- 해결: 
 fetchCards 함수를 useEffect 안쪽에서 새로 선언하여, selectedTag가 변경될 때마다
 새 URL로 자동 갱신되도록 변경.
 
@@ -44,7 +44,7 @@ useEffect(() => {
 
 2. API 설계: SQL 쿼리 WHERE 절 사용 오류
 
-- 문제
+- 문제: 
 백엔드 /cards/list API에서 SQL 작성 시,
 WHERE 절을 두 번 사용하여 SQL 오류가 발생했음.
 
@@ -53,7 +53,7 @@ WHERE C.is_deleted = false
 WHERE C.card_id IN (...)
 ```
 
-- 해결
+- 해결: 
 WHERE는 첫 번째 한 번만 쓰고, 이후 조건은 반드시 AND로 연결해야 함.
 조건을 다음처럼 수정하여 문제 해결.
 

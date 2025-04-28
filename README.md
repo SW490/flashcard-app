@@ -11,27 +11,25 @@
 > 履歴書 | https://buly.kr/15Og2v4
 
 ---
-# 🛠️ 트러블슈팅 기록 (2025-04-28)
-## 이슈
+## 🛠️ 트러블슈팅 기록 (2025-04-28)
+### 이슈
 - 태그 필터링 기능이 정상적으로 작동하지 않음.
 - 태그를 클릭해도 카드 목록이 변경되지 않고 전체가 계속 표시됨.
 
-## 🧩 원인 분석 및 솔루션
+### 🧩 원인 분석 및 솔루션
 1. useCallback 함수로 묶지 말고, 호출 가능한 위치로 분리
-문제
+
+- 문제
 fetchCards 함수를 useCallback으로 감쌌더니, url이 변해도 fetchCards가 갱신되지 않아,
 변경된 selectedTag를 반영하지 못하고 이전 URL로만 요청하는 문제가 발생함.
 
-해결
+- 해결
 fetchCards 함수를 useEffect 안쪽에서 새로 선언하여, selectedTag가 변경될 때마다
 새 URL로 자동 갱신되도록 변경.
 
-즉, useCallback 대신 일반 함수 선언 및 useEffect 재호출로 문제 해결.
+-> 즉, useCallback 대신 일반 함수 선언 및 useEffect 재호출로 문제 해결.
 
-코드
-javascript
-복사
-편집
+```javascript
 useEffect(() => {    
   const fetchCards = async () => {
     const url = selectedTag
@@ -42,34 +40,34 @@ useEffect(() => {
   };
   fetchCards();
 }, [selectedTag]);
+```
+
 2. API 설계: SQL 쿼리 WHERE 절 사용 오류
-문제
+
+- 문제
 백엔드 /cards/list API에서 SQL 작성 시,
 WHERE 절을 두 번 사용하여 SQL 오류가 발생했음.
 
-잘못된 쿼리 예시
-sql
-복사
-편집
+```sql
 WHERE C.is_deleted = false
 WHERE C.card_id IN (...)
-해결
-WHERE는 첫 번째 한 번만 쓰고, 이후 조건은 반드시 AND로 연결해야 함.
+```
 
+- 해결
+WHERE는 첫 번째 한 번만 쓰고, 이후 조건은 반드시 AND로 연결해야 함.
 조건을 다음처럼 수정하여 문제 해결.
 
-수정된 쿼리 예시
-sql
-복사
-편집
+```sql
 WHERE C.is_deleted = false
 AND C.card_id IN (...)
-💡 교훈
-프론트엔드: useCallback 사용 시, 의존성 배열과 URL 동적 생성 문제를 항상 주의할 것.
+```
 
-백엔드: SQL 작성 시 WHERE 중복 사용을 피하고, 추가 조건은 항상 AND로 연결할 것.
+### 💡 교훈
+- 프론트엔드: useCallback 사용 시, 의존성 배열과 URL 동적 생성 문제를 항상 주의할 것.
 
-통합 테스트: 단위 기능 테스트뿐만 아니라, 기능 조합(필터링 + 삭제 등) 상황까지 시뮬레이션하며 통합 테스트를 수행할 것.
+- 백엔드: SQL 작성 시 WHERE 중복 사용을 피하고, 추가 조건은 항상 AND로 연결할 것.
+
+- 통합 테스트: 단위 기능 테스트뿐만 아니라, 기능 조합(필터링 + 삭제 등) 상황까지 시뮬레이션하며 통합 테스트를 수행할 것.
 ---
 
 ## 🔧 오늘의 작업 요약 (2025-04-09)
